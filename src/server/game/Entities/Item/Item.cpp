@@ -474,8 +474,8 @@ bool Item::LoadFromDB(ObjectGuid::LowType guid, ObjectGuid owner_guid, Field* fi
 
     SetInt32Value(ITEM_FIELD_RANDOM_PROPERTIES_ID, fields[7].GetInt16());
     // recalculate suffix factor
-    if (GetItemRandomPropertyId() < 0)
-        UpdateItemSuffixFactor();
+    //if (GetItemRandomPropertyId() < 0)
+    UpdateItemSuffixFactor();
 
     uint32 durability = fields[8].GetUInt16();
     SetUInt32Value(ITEM_FIELD_DURABILITY, durability);

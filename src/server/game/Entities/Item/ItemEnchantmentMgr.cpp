@@ -167,14 +167,17 @@ int32 GenerateItemRandomPropertyId(uint32 item_id)
 
 uint32 GenerateEnchSuffixFactor(uint32 item_id)
 {
+    //TC_LOG_INFO("server.worldserver", "GenerateEnchSuffixFactor: GeneratingEnchSuffixFactor for item {}", item_id);
     ItemTemplate const* itemProto = sObjectMgr->GetItemTemplate(item_id);
 
     if (!itemProto)
         return 0;
-    if (!itemProto->RandomSuffix)
-        return 0;
+    // All items now have a point budget (suffix factor) for enchantments.
+    /*if (!itemProto->RandomSuffix)
+        return 0;*/
 
     RandPropPointsEntry const* randomProperty = sRandPropPointsStore.LookupEntry(itemProto->ItemLevel);
+    //TC_LOG_INFO("server.worldserver", "GenerateEnchSuffixFactor: Obtained random property ID for item {} = {}", item_id, randomProperty->ID);
     if (!randomProperty)
         return 0;
 
@@ -229,6 +232,10 @@ uint32 GenerateEnchSuffixFactor(uint32 item_id)
     // Select rare/epic modifier
     switch (itemProto->Quality)
     {
+        case ITEM_QUALITY_POOR:
+            return std::round(randomProperty->Epic[suffixFactor] * 0.25);
+        case ITEM_QUALITY_NORMAL:
+            return std::round(randomProperty->Epic[suffixFactor] * 0.5);
         case ITEM_QUALITY_UNCOMMON:
             return randomProperty->Good[suffixFactor];
         case ITEM_QUALITY_RARE:
@@ -236,6 +243,7 @@ uint32 GenerateEnchSuffixFactor(uint32 item_id)
         case ITEM_QUALITY_EPIC:
             return randomProperty->Epic[suffixFactor];
         case ITEM_QUALITY_LEGENDARY:
+            return std::round(randomProperty->Epic[suffixFactor] * 1.5);
         case ITEM_QUALITY_ARTIFACT:
             return 0;                                       // not have random properties
         default:
