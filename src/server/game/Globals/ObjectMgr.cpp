@@ -4736,8 +4736,8 @@ void ObjectMgr::LoadPlayerInfo()
                     info->levelInfo = std::make_unique<PlayerLevelInfo[]>(sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL));
 
                 PlayerLevelInfo& levelInfo = info->levelInfo[current_level - 1];
-                for (uint8 i = 0; i < MAX_STATS; ++i)
-                    levelInfo.stats[i] = fields[i + 3].GetUInt8();
+                for (uint32 i = 0; i < MAX_STATS; ++i)
+                    levelInfo.stats[i] = fields[i + 3].GetUInt32();
             }
 
             ++count;
