@@ -1582,6 +1582,25 @@ void Spell::DoCreateItem(uint32 itemId)
 
     /* == profession specialization handling over == */
 
+    // @tswow-begin
+    // Scripts may swap the created item (e.g. for a randomly enchanted copy) or change the amount.
+    uint32 const scriptedItemId = newitemid;
+    FIRE_ID(
+          m_spellInfo->events.id
+        , Spell,OnCreateItem
+        , TSSpell(this)
+        , TSPlayer(player)
+        , TSMutableNumber<uint32>(&newitemid)
+        , TSMutableNumber<uint32>(&num_to_add)
+    );
+    if (newitemid != scriptedItemId && !sObjectMgr->GetItemTemplate(newitemid))
+    {
+        TC_LOG_ERROR("spells", "Spell::DoCreateItem: OnCreateItem changed item {} to {}, which has no template. Creating {} instead.",
+            scriptedItemId, newitemid, scriptedItemId);
+        newitemid = scriptedItemId;
+    }
+    // @tswow-end
+
     // can the player store the new item?
     ItemPosCountVec dest;
     uint32 no_space = 0;
